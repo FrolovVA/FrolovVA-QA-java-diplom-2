@@ -16,7 +16,7 @@ public class IngredientsListSteps {
     private String baseUrl = "https://stellarburgers.nomoreparties.site/";
     private String getIngredientsListHandle = "api/ingredients";
 
-    @Step("Отравляем Api запрос GET /api/order для получения списка ингредиентов")
+    @Step("Формируем Api запрос GET /api/order для получения списка ингредиентов")
     public ValidatableResponse getIngredientsListRequest(){
         return given()
                 .contentType(ContentType.JSON)
@@ -26,7 +26,7 @@ public class IngredientsListSteps {
                 .then();
     }
 
-    @Step("Преобразуем ответ на запрос GET /api/order в список id ингредиентов")
+    @Step("Преобразуем ответ на запрос GET /api/order в список ингредиентов")
     public List<String> getIngredientsListAsString(ValidatableResponse validatableResponse) throws JsonProcessingException {
         String json = validatableResponse.extract().asString();
         ListIngredientsResponse ingredientsResponse = new ObjectMapper().readValue(json, ListIngredientsResponse.class);
@@ -35,6 +35,8 @@ public class IngredientsListSteps {
                 .collect(Collectors.toList());
     }
 
+
+    @Step("Получаем список из id ингредиентов")
     public List<String> getIngredientsIdsAsList() throws JsonProcessingException {
         return getIngredientsListAsString(getIngredientsListRequest());
     }

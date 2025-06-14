@@ -10,7 +10,7 @@ public class UsersOrderSteps {
     private String baseUrl = "https://stellarburgers.nomoreparties.site/";
     private String orderHandle = "api/orders";
 
-    @Step("Отравляем Api запрос GET /api/order для получения заказа")
+    @Step("Формируем Api запрос GET /api/order для получения заказа")
     public ValidatableResponse getUsersOrderRequest(String accessToken) {
         var requestSpec = given()
                 .contentType(ContentType.JSON)
@@ -24,6 +24,7 @@ public class UsersOrderSteps {
                 .then();
     }
 
+    @Step("Отравляем Api запрос GET /api/order для получения заказа и получаем ответ")
     public ValidatableResponse getUsersOrderList (String accessToken){
         return getUsersOrderRequest(accessToken);
     }

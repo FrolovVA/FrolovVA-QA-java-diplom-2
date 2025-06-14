@@ -107,9 +107,11 @@ public class APIPatchUserTest {
     }
 
     @Test
-    @DisplayName("Проверка Api запроса PATCH /api/auth/user при изменении данных пользователя с таким же email и с авторизацией")
+    @DisplayName("Проверка Api запроса PATCH /api/auth/user при изменении данных пользователя, изменение email на существующий и с авторизацией")
     public void patchUserInfoSameEmailWithAuthTest(){
-        ValidatableResponse validatableResponse = patchEmail(accessToken, email);
+        String newEmail = RandomStringUtils.randomAlphabetic(10).toLowerCase() + "@yandex.ru";
+        creatingUser(newEmail, password, name);
+        ValidatableResponse validatableResponse = patchEmail(accessToken, newEmail);
         checkStatusCode(validatableResponse, 403);
         checkSuccessStatus(validatableResponse, false);
         checkMessage(validatableResponse, "User with such email already exists");
@@ -145,7 +147,7 @@ public class APIPatchUserTest {
     }
 
     @Test
-    @DisplayName("Проверка Api запроса PATCH /api/auth/user при изменении данных пользователя с таким же email, но без авторизацией")
+    @DisplayName("Проверка Api запроса PATCH /api/auth/user при изменении данных пользователя, изменение email на существующий, но без авторизацией")
     public void patchUserInfoSameEmailWithoutAuthTest(){
         ValidatableResponse validatableResponse = patchEmail(null, email);
         checkStatusCode(validatableResponse, 401);

@@ -23,7 +23,7 @@ private String userInfoHandle = "/api/auth/user";
         return request;
     }
 
-    @Step("Отравляем Api запрос POST /api/auth/register для создания пользователя")
+    @Step("Формируем Api запрос POST /api/auth/register для создания пользователя")
     public ValidatableResponse postCreateUserRequest(String baseUrl, CreateUserRequest createUserRequestBody, String createUserHandle){
         return given()
                 .contentType(ContentType.JSON)
@@ -34,6 +34,7 @@ private String userInfoHandle = "/api/auth/user";
                 .then();
     }
 
+    @Step("Отправляем Api запрос POST /api/auth/register для создания пользователя и получаем ответ")
     public ValidatableResponse createUser(String email, String password, String name) {
         CreateUserRequest createUserRequestBody = createUserRequestBody(email, password, name);
         return postCreateUserRequest(baseUrl, createUserRequestBody, createUserHandle);
@@ -47,7 +48,7 @@ private String userInfoHandle = "/api/auth/user";
         return request;
     }
 
-    @Step("Отправляем Api запрос POST /api/auth/login для логина пользователя")
+    @Step("Формируем Api запрос POST /api/auth/login для логина пользователя")
     public ValidatableResponse postLoginUserRequest(String baseUrl, LoginUserRequest loginUserRequestBody, String loginUserHandle){
         return given()
                 .contentType(ContentType.JSON)
@@ -58,12 +59,13 @@ private String userInfoHandle = "/api/auth/user";
                 .then();
     }
 
+    @Step("Отправляем Api запрос POST /api/auth/login для логина пользователя и получаем ответ")
     public ValidatableResponse loginUser(String email, String password){
         LoginUserRequest loginUserRequestBody = loginUserRequestBody(email, password);
         return postLoginUserRequest(baseUrl, loginUserRequestBody, loginUserHandle);
     }
 
-    @Step("Отправляем Api запрос DELETE /api/auth/user для удаления пользователя")
+    @Step("Формируем Api запрос DELETE /api/auth/user для удаления пользователя")
     public  ValidatableResponse deleteDeleteUserRequest(String accessToken){
         return given()
                 .headers(
@@ -76,11 +78,12 @@ private String userInfoHandle = "/api/auth/user";
                 .then();
     }
 
+    @Step("Отправляем Api запрос DELETE /api/auth/user для удаления пользователя и получаем ответ")
     public ValidatableResponse deleteUser(String accessToken){
         return deleteDeleteUserRequest(accessToken);
     }
 
-    @Step("Оправляем Api запрос PATCH /api/auth/user для обновления имени в информации о пользователе")
+    @Step("Формируем Api запрос PATCH /api/auth/user для обновления имени в информации о пользователе")
     public ValidatableResponse patchUserInfoNameRequest(String accessToken, String name) {
         var requestSpec = given()
                 .contentType(ContentType.JSON)
@@ -95,11 +98,12 @@ private String userInfoHandle = "/api/auth/user";
                 .then();
     }
 
+    @Step("Отправляем Api запрос PATCH /api/auth/user для обновления имени в информации о пользователе и получаем ответ")
     public ValidatableResponse patchUserName(String accessToken, String name) throws IllegalArgumentException{
         return patchUserInfoNameRequest(accessToken, name);
     }
 
-    @Step("Оправляем Api запрос PATCH /api/auth/user для обновления имени в информации о пользователе")
+    @Step("Формируем Api запрос PATCH /api/auth/user для обновления имени в информации о пользователе")
     public ValidatableResponse patchUserInfoEmailRequest(String accessToken, String email) {
         var requestSpec = given()
                 .contentType(ContentType.JSON)
@@ -114,6 +118,7 @@ private String userInfoHandle = "/api/auth/user";
                 .then();
     }
 
+    @Step("Отправляем Api запрос PATCH /api/auth/user для обновления имени в информации о пользователе и получаем ответ")
     public ValidatableResponse patchUserEmail(String accessToken, String email) throws IllegalArgumentException{
         return patchUserInfoEmailRequest(accessToken, email);
     }
