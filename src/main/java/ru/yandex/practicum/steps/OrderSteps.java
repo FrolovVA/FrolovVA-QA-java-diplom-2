@@ -1,22 +1,17 @@
 package ru.yandex.practicum.steps;
 
 import io.qameta.allure.Step;
-import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import ru.yandex.practicum.dto.CreateOrderRequest;
 import java.util.List;
 import static io.restassured.RestAssured.given;
 
 public class OrderSteps {
-    private String baseUrl = "https://stellarburgers.nomoreparties.site/";
-    private String orderHandle = "api/orders";
+    private final String orderHandle = "api/orders";
 
     @Step("Формируем Api запрос POST /api/orders для создания заказа")
     public ValidatableResponse postCreateOrderRequest(String accessToken, CreateOrderRequest createOrderRequestBody) {
-        var requestSpec = given()
-                .contentType(ContentType.JSON)
-                .baseUri(baseUrl)
-                .body(createOrderRequestBody);
+        var requestSpec = given().spec(RequestSpec.baseSpec()).body(createOrderRequestBody);
         if (accessToken != null) {
             requestSpec.header("Authorization", accessToken);
         }

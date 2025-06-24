@@ -1,18 +1,16 @@
 package ru.yandex.practicum.steps;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Step;
-import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import ru.yandex.practicum.dto.CreateUserRequest;
 import ru.yandex.practicum.dto.LoginUserRequest;
 import static io.restassured.RestAssured.given;
 
 public class UserSteps {
-
-private String baseUrl = "https://stellarburgers.nomoreparties.site/";
-private String createUserHandle = "api/auth/register";
-private String loginUserHandle = "/api/auth/login";
-private String userInfoHandle = "/api/auth/user";
+private final String createUserHandle = "api/auth/register";
+private final String loginUserHandle = "/api/auth/login";
+private final String userInfoHandle = "/api/auth/user";
 
     @Step("Формируем json тело для запроса POST /api/auth/register для создания пользователя")
     public CreateUserRequest createUserRequestBody(String email, String password, String name){
@@ -24,10 +22,9 @@ private String userInfoHandle = "/api/auth/user";
     }
 
     @Step("Формируем Api запрос POST /api/auth/register для создания пользователя")
-    public ValidatableResponse postCreateUserRequest(String baseUrl, CreateUserRequest createUserRequestBody, String createUserHandle){
+    public ValidatableResponse postCreateUserRequest( CreateUserRequest createUserRequestBody, String createUserHandle){
         return given()
-                .contentType(ContentType.JSON)
-                .baseUri(baseUrl)
+                .spec(RequestSpec.baseSpec())
                 .body(createUserRequestBody)
                 .when()
                 .post(createUserHandle)
@@ -37,7 +34,7 @@ private String userInfoHandle = "/api/auth/user";
     @Step("Отправляем Api запрос POST /api/auth/register для создания пользователя и получаем ответ")
     public ValidatableResponse createUser(String email, String password, String name) {
         CreateUserRequest createUserRequestBody = createUserRequestBody(email, password, name);
-        return postCreateUserRequest(baseUrl, createUserRequestBody, createUserHandle);
+        return postCreateUserRequest(createUserRequestBody, createUserHandle);
     }
 
     @Step("Формируем json тело для запроса POST /api/auth/login для логина пользователя")
@@ -49,10 +46,9 @@ private String userInfoHandle = "/api/auth/user";
     }
 
     @Step("Формируем Api запрос POST /api/auth/login для логина пользователя")
-    public ValidatableResponse postLoginUserRequest(String baseUrl, LoginUserRequest loginUserRequestBody, String loginUserHandle){
+    public ValidatableResponse postLoginUserRequest(LoginUserRequest loginUserRequestBody, String loginUserHandle){
         return given()
-                .contentType(ContentType.JSON)
-                .baseUri(baseUrl)
+                .spec(RequestSpec.baseSpec())
                 .body(loginUserRequestBody)
                 .when()
                 .post(loginUserHandle)
@@ -62,20 +58,21 @@ private String userInfoHandle = "/api/auth/user";
     @Step("Отправляем Api запрос POST /api/auth/login для логина пользователя и получаем ответ")
     public ValidatableResponse loginUser(String email, String password){
         LoginUserRequest loginUserRequestBody = loginUserRequestBody(email, password);
-        return postLoginUserRequest(baseUrl, loginUserRequestBody, loginUserHandle);
+        return postLoginUserRequest(loginUserRequestBody, loginUserHandle);
     }
 
     @Step("Формируем Api запрос DELETE /api/auth/user для удаления пользователя")
     public  ValidatableResponse deleteDeleteUserRequest(String accessToken){
-        return given()
-                .headers(
-                        "Authorization", accessToken,
-                        "Content-Type", ContentType.JSON
-                        )
-                .baseUri(baseUrl)
+        var requestSpec = given()
+                .spec(RequestSpec.baseSpec());
+        if (accessToken != null) {
+            requestSpec.header("Authorization", accessToken);
+        }
+        return requestSpec
                 .when()
                 .delete(userInfoHandle)
                 .then();
+
     }
 
     @Step("Отправляем Api запрос DELETE /api/auth/user для удаления пользователя и получаем ответ")
@@ -86,9 +83,8 @@ private String userInfoHandle = "/api/auth/user";
     @Step("Формируем Api запрос PATCH /api/auth/user для обновления имени в информации о пользователе")
     public ValidatableResponse patchUserInfoNameRequest(String accessToken, String name) {
         var requestSpec = given()
-                .contentType(ContentType.JSON)
-                .baseUri(baseUrl)
-                .body("{\n" + "\"name\": \"" + name + "\"\n" + "}");
+                .spec(RequestSpec.baseSpec())
+                .body(new ObjectMapper().createObjectNode().put("name", name));
         if (accessToken != null) {
             requestSpec.header("Authorization", accessToken);
         }
@@ -103,12 +99,11 @@ private String userInfoHandle = "/api/auth/user";
         return patchUserInfoNameRequest(accessToken, name);
     }
 
-    @Step("Формируем Api запрос PATCH /api/auth/user для обновления имени в информации о пользователе")
+    @Step("Формируем Api запрос PATCH /api/auth/user для обновления email в информации о пользователе")
     public ValidatableResponse patchUserInfoEmailRequest(String accessToken, String email) {
         var requestSpec = given()
-                .contentType(ContentType.JSON)
-                .baseUri(baseUrl)
-                .body("{\n" + "\"email\": \"" + email + "\"\n" + "}");
+                .spec(RequestSpec.baseSpec())
+                .body(new ObjectMapper().createObjectNode().put("email", email));
         if (accessToken != null) {
             requestSpec.header("Authorization", accessToken);
         }
@@ -118,7 +113,7 @@ private String userInfoHandle = "/api/auth/user";
                 .then();
     }
 
-    @Step("Отправляем Api запрос PATCH /api/auth/user для обновления имени в информации о пользователе и получаем ответ")
+    @Step("Отправляем Api запрос PATCH /api/auth/user для обновления email в информации о пользователе и получаем ответ")
     public ValidatableResponse patchUserEmail(String accessToken, String email) throws IllegalArgumentException{
         return patchUserInfoEmailRequest(accessToken, email);
     }

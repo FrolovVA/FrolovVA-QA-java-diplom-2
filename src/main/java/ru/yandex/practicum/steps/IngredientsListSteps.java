@@ -3,7 +3,6 @@ package ru.yandex.practicum.steps;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Step;
-import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import ru.yandex.practicum.dto.ListIngredientsResponse;
 import ru.yandex.practicum.dto.IngredientInfo;
@@ -13,14 +12,12 @@ import static io.restassured.RestAssured.given;
 
 public class IngredientsListSteps {
 
-    private String baseUrl = "https://stellarburgers.nomoreparties.site/";
-    private String getIngredientsListHandle = "api/ingredients";
+    private final String getIngredientsListHandle = "api/ingredients";
 
     @Step("Формируем Api запрос GET /api/order для получения списка ингредиентов")
     public ValidatableResponse getIngredientsListRequest(){
         return given()
-                .contentType(ContentType.JSON)
-                .baseUri(baseUrl)
+                .spec(RequestSpec.baseSpec())
                 .when()
                 .get(getIngredientsListHandle)
                 .then();
