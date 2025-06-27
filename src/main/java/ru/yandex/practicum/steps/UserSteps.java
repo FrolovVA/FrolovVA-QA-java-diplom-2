@@ -5,6 +5,9 @@ import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
 import ru.yandex.practicum.dto.CreateUserRequest;
 import ru.yandex.practicum.dto.LoginUserRequest;
+import ru.yandex.practicum.dto.PatchUserEmailRequest;
+import ru.yandex.practicum.dto.PatchUserNameRequest;
+
 import static io.restassured.RestAssured.given;
 
 public class UserSteps {
@@ -80,11 +83,21 @@ private final String userInfoHandle = "/api/auth/user";
         return deleteDeleteUserRequest(accessToken);
     }
 
+
+
+    @Step("Формируем json тело для запроса PATCH /api/auth/user для изменения имени в информации о пользователе")
+    public PatchUserNameRequest patchUserNameRequestBody(String name){
+        PatchUserNameRequest request =new PatchUserNameRequest();
+        request.setName(name);
+        return request;
+    }
+
+
     @Step("Формируем Api запрос PATCH /api/auth/user для обновления имени в информации о пользователе")
-    public ValidatableResponse patchUserInfoNameRequest(String accessToken, String name) {
+    public ValidatableResponse patchUserInfoNameRequest(String accessToken, PatchUserNameRequest patchUserNameRequestBody) {
         var requestSpec = given()
                 .spec(RequestSpec.baseSpec())
-                .body(new ObjectMapper().createObjectNode().put("name", name));
+                .body(patchUserNameRequestBody);
         if (accessToken != null) {
             requestSpec.header("Authorization", accessToken);
         }
@@ -96,14 +109,23 @@ private final String userInfoHandle = "/api/auth/user";
 
     @Step("Отправляем Api запрос PATCH /api/auth/user для обновления имени в информации о пользователе и получаем ответ")
     public ValidatableResponse patchUserName(String accessToken, String name) throws IllegalArgumentException{
-        return patchUserInfoNameRequest(accessToken, name);
+        PatchUserNameRequest patchUserNameRequestBody = patchUserNameRequestBody(name);
+        return patchUserInfoNameRequest(accessToken, patchUserNameRequestBody);
+    }
+
+
+    @Step("Формируем json тело для запроса PATCH /api/auth/user для изменения email в информации о пользователе")
+    public PatchUserEmailRequest patchUserEmailRequestBody(String email){
+        PatchUserEmailRequest request =new PatchUserEmailRequest();
+        request.setEmail(email);
+        return request;
     }
 
     @Step("Формируем Api запрос PATCH /api/auth/user для обновления email в информации о пользователе")
-    public ValidatableResponse patchUserInfoEmailRequest(String accessToken, String email) {
+    public ValidatableResponse patchUserInfoEmailRequest(String accessToken, PatchUserEmailRequest patchUserEmailRequestBody) {
         var requestSpec = given()
                 .spec(RequestSpec.baseSpec())
-                .body(new ObjectMapper().createObjectNode().put("email", email));
+                .body(patchUserEmailRequestBody);
         if (accessToken != null) {
             requestSpec.header("Authorization", accessToken);
         }
@@ -115,6 +137,7 @@ private final String userInfoHandle = "/api/auth/user";
 
     @Step("Отправляем Api запрос PATCH /api/auth/user для обновления email в информации о пользователе и получаем ответ")
     public ValidatableResponse patchUserEmail(String accessToken, String email) throws IllegalArgumentException{
-        return patchUserInfoEmailRequest(accessToken, email);
+        PatchUserEmailRequest patchUserEmailRequestBody = patchUserEmailRequestBody(email);
+        return patchUserInfoEmailRequest(accessToken, patchUserEmailRequestBody);
     }
 }

@@ -1,10 +1,13 @@
 package ru.yandex.practicum.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class IngredientInfo {
-    private String _id;
+    @JsonProperty("_id")
+    private String id;
+
     private String name;
     private String type;
     private Integer proteins;
@@ -13,7 +16,11 @@ public class IngredientInfo {
     private Integer calories;
     private Integer price;
     private String image;
-    private String image_mobile;
-    private String image_large;
-    private Integer __v;
+
+    @JsonProperty("image_mobile")
+    private String imageMobile;
+    @JsonProperty("image_large")
+    private String imageLarge;
+    @JsonProperty("__v")
+    private Integer v;
 }

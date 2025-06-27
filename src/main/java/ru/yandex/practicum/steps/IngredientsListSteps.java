@@ -28,7 +28,7 @@ public class IngredientsListSteps {
         String json = validatableResponse.extract().asString();
         ListIngredientsResponse ingredientsResponse = new ObjectMapper().readValue(json, ListIngredientsResponse.class);
         return ingredientsResponse.getData().stream()
-                .map(IngredientInfo::get_id)
+                .map(IngredientInfo::getId)
                 .collect(Collectors.toList());
     }
 
